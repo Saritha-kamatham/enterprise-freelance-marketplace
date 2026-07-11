@@ -23,16 +23,21 @@ You can boot the database, backend services, and frontend proxy with:
 ```bash
 docker-compose up --build
 ```
-This serves the frontend on [http://localhost:3000](http://localhost:3000) and the backend API on [http://localhost:8080](http://localhost:8080).
+This serves the localized frontend on [http://localhost:3000](http://localhost:3000) and the backend API on [http://localhost:8080](http://localhost:8080).
 
 ### Running Locally for Development
 1. **Backend:**
    Ensure Java 17+ is installed. Navigate to the backend directory and run:
    ```bash
    cd backend
-   mvn spring-boot:run -Dspring-boot.run.profiles=local
+   mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=local
    ```
-   This bootstrapper runs the server on `8080` with an in-memory H2 database and auto-seeding.
+   This bootstrapper runs the server on `8080` with an in-memory H2 database, preloaded with 20 realistic Indian projects/briefs, and auto-seeding.
 
 2. **Frontend:**
-   You can serve the `frontend` folder using any static web server (e.g. VS Code Live Server or static Nginx) or browse the `index.html` directly since the JS handles routing dynamically.
+   You can serve the `frontend` folder using `npx http-server` on port `5000`:
+   ```bash
+   cd frontend
+   npx http-server -p 5000
+   ```
+   Then open [http://localhost:5000](http://localhost:5000) in your browser. Ensure you clear the browser cache or open in **Incognito Mode** to bypass aggressively cached ES6 modules!
