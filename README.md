@@ -186,7 +186,7 @@ You can boot the database, backend services, and frontend proxy with:
 ```bash
 docker-compose up --build
 ```
-This serves the localized frontend on [http://localhost:3000](http://localhost:3000) and the backend API on [http://localhost:8080](http://localhost:8080).
+
 
 ---
 
