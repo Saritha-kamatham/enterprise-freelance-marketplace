@@ -108,7 +108,10 @@ export const ContractView = {
             <!-- Review/Completion Modal (Clients only) -->
             <div class="modal" id="modal-review">
                 <div class="modal-content">
-                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Complete Contract & Leave Review</h3>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 700; margin: 0;">Complete Contract & Leave Review</h3>
+                        <span id="close-review-modal" style="cursor: pointer; font-size: 1.5rem; opacity: 0.7;">&times;</span>
+                    </div>
                     <form id="review-form">
                         <div class="form-group">
                             <label class="form-label">Score (1 - 5 stars)</label>
@@ -166,6 +169,9 @@ export const ContractView = {
                 });
                 document.getElementById('close-milestone-modal').addEventListener('click', () => {
                     milestoneModal.style.display = 'none';
+                });
+                document.getElementById('close-review-modal').addEventListener('click', () => {
+                    reviewModal.style.display = 'none';
                 });
 
                 milestoneForm.addEventListener('submit', async (e) => {
