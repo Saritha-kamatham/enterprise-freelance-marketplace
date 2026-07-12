@@ -61,7 +61,9 @@ C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketpla
 C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\service\impl\ContractServiceImpl.java
 C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\service\impl\FileSystemStorageService.java
 C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\service\impl\ProjectServiceImpl.java
+C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\service\impl\ReviewServiceImpl.java
 C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\service\ProjectService.java
+C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\service\ReviewService.java
 C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\service\StorageService.java
 C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\web\advice\GlobalExceptionHandler.java
 C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\web\controller\AnalyticsController.java
@@ -71,4 +73,5 @@ C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketpla
 C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\web\controller\ContractController.java
 C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\web\controller\FileController.java
 C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\web\controller\ProjectController.java
+C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\web\controller\ReviewController.java
 C:\Users\Prasanth7799\.gemini\antigravity\scratch\enterprise-freelance-marketplace\backend\src\main\java\com\enterprise\marketplace\web\websocket\ChatSocketController.java

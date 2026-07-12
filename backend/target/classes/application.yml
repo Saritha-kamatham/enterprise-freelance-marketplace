@@ -3,6 +3,8 @@ spring:
     active: local
   jackson:
     property-naming-strategy: SNAKE_CASE
+server:
+  forward-headers-strategy: framework
   servlet:
     multipart:
       enabled: true

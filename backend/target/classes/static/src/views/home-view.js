@@ -3,7 +3,6 @@ import { AuthService } from '../services/auth-service.js';
 import { Router } from '../router.js';
 import { Toast } from '../components/toast.js';
 import { WebSocketService } from '../services/websocket-service.js';
-import { GOOGLE_CLIENT_ID } from '../config.js';
 
 export const HomeView = {
     render() {
@@ -76,47 +75,11 @@ export const HomeView = {
                                 <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 1rem;">Create Account</button>
                             </form>
 
-                            <!-- Google Login Section -->
-                            <div style="margin: 1.5rem 0; display: flex; align-items: center; justify-content: center; width: 100%;">
-                                <span style="border-top: 1px solid var(--color-border); flex-grow: 1;"></span>
-                                <span style="padding: 0 10px; color: var(--color-text-secondary); font-size: 0.85rem;">or</span>
-                                <span style="border-top: 1px solid var(--color-border); flex-grow: 1;"></span>
-                            </div>
-                            <div id="google-btn" style="display: flex; justify-content: center; width: 100%;"></div>
-
                             <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--color-text-secondary);">
                                 <span id="toggle-text">Need an account?</span>
                                 <a id="toggle-auth" style="color: var(--color-primary); cursor: pointer; font-weight: 600; margin-left: 0.25rem;">Sign Up</a>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Google Sign-Up Role Selection Modal -->
-            <div id="role-modal" class="modal" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000;">
-                <div class="modal-content" style="max-width: 450px; background: var(--color-bg-secondary); padding: 2rem; border-radius: 12px; width: 90%;">
-                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center; color: var(--color-text-primary);">Complete Your Profile</h3>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Account Type</label>
-                        <select id="google-reg-role" class="form-control" required>
-                            <option value="CLIENT">Client / Employer (Hire Providers)</option>
-                            <option value="FREELANCER">Service Provider / Freelancer (Submit Quotes)</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="google-group-fullname" style="display: none;">
-                        <label class="form-label">Full Name</label>
-                        <input type="text" id="google-reg-fullname" class="form-control">
-                    </div>
-                    <div class="form-group" id="google-group-company">
-                        <label class="form-label">Company Name</label>
-                        <input type="text" id="google-reg-company" class="form-control">
-                    </div>
-                    
-                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                        <button id="cancel-role-btn" class="btn btn-secondary" style="flex: 1;">Cancel</button>
-                        <button id="submit-role-btn" class="btn btn-primary" style="flex: 1;">Submit</button>
                     </div>
                 </div>
             </div>
@@ -161,84 +124,6 @@ export const HomeView = {
                 groupFullname.style.display = 'block';
             }
         });
-
-        // Initialize Google Sign-In Programmatically
-        if (window.google) {
-            window.google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: async (response) => {
-                    await handleGoogleLogin(response.credential);
-                }
-            });
-            window.google.accounts.id.renderButton(
-                document.getElementById('google-btn'),
-                { theme: 'outline', size: 'large', width: 280 }
-            );
-        }
-
-        async function handleGoogleLogin(credential) {
-            try {
-                const response = await HttpClient.post('/auth/google', { credential });
-                if (response.rolePending) {
-                    // Show role selection modal
-                    const roleModal = document.getElementById('role-modal');
-                    roleModal.style.display = 'flex';
-                    
-                    const submitBtn = document.getElementById('submit-role-btn');
-                    const cancelBtn = document.getElementById('cancel-role-btn');
-                    const googleRole = document.getElementById('google-reg-role');
-                    const googleFullnameGroup = document.getElementById('google-group-fullname');
-                    const googleCompanyGroup = document.getElementById('google-group-company');
-                    
-                    googleRole.onchange = (e) => {
-                        if (e.target.value === 'CLIENT') {
-                            googleCompanyGroup.style.display = 'block';
-                            googleFullnameGroup.style.display = 'none';
-                        } else {
-                            googleCompanyGroup.style.display = 'none';
-                            googleFullnameGroup.style.display = 'block';
-                        }
-                    };
-                    
-                    cancelBtn.onclick = () => {
-                        roleModal.style.display = 'none';
-                    };
-                    
-                    submitBtn.onclick = async () => {
-                        const selectedRole = googleRole.value;
-                        const fullName = document.getElementById('google-reg-fullname').value;
-                        const companyName = document.getElementById('google-reg-company').value;
-                        
-                        try {
-                            const regResponse = await HttpClient.post('/auth/google/register', {
-                                regToken: response.regToken,
-                                role: selectedRole,
-                                fullName: selectedRole === 'FREELANCER' ? fullName : null,
-                                companyName: selectedRole === 'CLIENT' ? companyName : null
-                            });
-                            
-                            roleModal.style.display = 'none';
-                            AuthService.saveSession(regResponse);
-                            Toast.show('Google Sign-Up successful!', 'success');
-                            WebSocketService.connect();
-                            Router.navigate('/dashboard');
-                            window.dispatchEvent(new CustomEvent('auth-changed'));
-                        } catch (err) {
-                            Toast.show(err.message, 'error');
-                        }
-                    };
-                } else {
-                    // Direct login success
-                    AuthService.saveSession(response.authResponse);
-                    Toast.show('Google Login successful!', 'success');
-                    WebSocketService.connect();
-                    Router.navigate('/dashboard');
-                    window.dispatchEvent(new CustomEvent('auth-changed'));
-                }
-            } catch (error) {
-                Toast.show(error.message, 'error');
-            }
-        }
 
         // Submit handlers
         loginForm.addEventListener('submit', async (e) => {

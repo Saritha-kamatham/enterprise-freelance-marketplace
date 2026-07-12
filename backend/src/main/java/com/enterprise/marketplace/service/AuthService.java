@@ -11,4 +11,6 @@ public interface AuthService {
     UserProfileResponse getProfile(String email);
     UserProfileResponse updateFreelancerProfile(Long id, UserProfileResponse request, String email);
     UserProfileResponse updateClientProfile(Long id, UserProfileResponse request, String email);
+    com.enterprise.marketplace.dto.response.GoogleAuthResponse authenticateGoogle(com.enterprise.marketplace.dto.request.GoogleAuthRequest request);
+    AuthResponse completeGoogleRegistration(com.enterprise.marketplace.dto.request.GoogleRoleSelectionRequest request);
 }

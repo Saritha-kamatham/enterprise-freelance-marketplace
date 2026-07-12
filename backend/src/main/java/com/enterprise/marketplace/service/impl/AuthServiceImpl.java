@@ -17,6 +17,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.enterprise.marketplace.dto.request.GoogleAuthRequest;
+import com.enterprise.marketplace.dto.request.GoogleRoleSelectionRequest;
+import com.enterprise.marketplace.dto.response.GoogleAuthResponse;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 
 import java.math.BigDecimal;
 
@@ -156,5 +163,80 @@ public class AuthServiceImpl implements AuthService {
 
         clientProfileRepository.save(profile);
         return getProfile(email);
+    }
+
+    @Override
+    public GoogleAuthResponse authenticateGoogle(GoogleAuthRequest request) {
+        try {
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                    new NetHttpTransport(),
+                    new GsonFactory()
+            ).build();
+
+            GoogleIdToken idToken = verifier.verify(request.credential());
+            if (idToken == null) {
+                throw new IllegalArgumentException("Invalid Google ID token");
+            }
+
+            GoogleIdToken.Payload payload = idToken.getPayload();
+            String email = payload.getEmail();
+            String name = (String) payload.get("name");
+
+            java.util.Optional<User> userOpt = userRepository.findByEmail(email);
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                String token = tokenProvider.generateToken(user.getEmail(), user.getRole().name());
+                AuthResponse authResponse = new AuthResponse(token, user.getId(), user.getEmail(), user.getRole().name());
+                return new GoogleAuthResponse(false, null, email, name, authResponse);
+            } else {
+                String regToken = tokenProvider.generateToken(email, "ROLE_PENDING");
+                return new GoogleAuthResponse(true, regToken, email, name, null);
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Google authentication failed: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public AuthResponse completeGoogleRegistration(GoogleRoleSelectionRequest request) {
+        if (!tokenProvider.validateToken(request.regToken())) {
+            throw new IllegalArgumentException("Invalid or expired registration token");
+        }
+
+        String roleClaim = tokenProvider.getRoleFromToken(request.regToken());
+        if (!"ROLE_PENDING".equals(roleClaim)) {
+            throw new IllegalArgumentException("Invalid registration token type");
+        }
+
+        String email = tokenProvider.getEmailFromToken(request.regToken());
+        if (userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email already registered");
+        }
+
+        Role role = Role.valueOf(request.role());
+
+        User user = new User();
+        user.setEmail(email);
+        user.setPasswordHash(passwordEncoder.encode(java.util.UUID.randomUUID().toString()));
+        user.setRole(role);
+        user = userRepository.save(user);
+
+        if (role == Role.FREELANCER) {
+            FreelancerProfile profile = new FreelancerProfile();
+            profile.setUser(user);
+            profile.setFullName(request.fullName() != null && !request.fullName().isBlank() ? request.fullName() : "Freelancer");
+            profile.setHourlyRate(BigDecimal.ZERO);
+            profile.setRatingAvg(BigDecimal.ZERO);
+            freelancerProfileRepository.save(profile);
+        } else if (role == Role.CLIENT) {
+            ClientProfile profile = new ClientProfile();
+            profile.setUser(user);
+            profile.setCompanyName(request.companyName() != null && !request.companyName().isBlank() ? request.companyName() : "Client Company");
+            profile.setVerifiedStatus(false);
+            clientProfileRepository.save(profile);
+        }
+
+        String token = tokenProvider.generateToken(user.getEmail(), user.getRole().name());
+        return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole().name());
     }
 }

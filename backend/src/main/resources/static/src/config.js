@@ -9,3 +9,6 @@ export const API_BASE = isDevServer
 export const WS_BASE = isDevServer 
     ? 'http://localhost:8080/ws' 
     : '/ws';
+
+// Google Client ID (replace with your actual client ID from Google Cloud Console)
+export const GOOGLE_CLIENT_ID = '913704962776-3gglv30lqgfvijhu8mobocrikue0bsdf.apps.googleusercontent.com';
