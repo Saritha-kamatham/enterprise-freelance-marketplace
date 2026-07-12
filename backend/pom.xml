@@ -95,6 +95,8 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
         <!-- Google API Client for Token Verification -->
         <dependency>
             <groupId>com.google.api-client</groupId>
