@@ -18,7 +18,7 @@ export const Navbar = {
                         <li><a href="#/dashboard" class="nav-link">Dashboard</a></li>
                         <li><a href="#/projects" class="nav-link">Browse Briefs</a></li>
                         <li style="color: var(--color-text-muted); font-size: 0.85rem; padding-left: 1rem; border-left: 1px solid var(--color-border);">
-                            ${email.split('@')[0]} (${role})
+                            ${AuthService.getName()} (${role})
                         </li>
                         <li>
                             <button id="nav-btn-logout" class="btn btn-secondary btn-sm" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; height: auto;">

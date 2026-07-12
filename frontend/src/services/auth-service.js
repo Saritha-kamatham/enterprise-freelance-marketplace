@@ -5,6 +5,7 @@ export const AuthService = {
         localStorage.setItem('user_id', authResponse.user_id);
         localStorage.setItem('user_email', authResponse.email);
         localStorage.setItem('user_role', authResponse.role);
+        localStorage.setItem('user_name', authResponse.name || '');
     },
 
     clearSession() {
@@ -12,6 +13,7 @@ export const AuthService = {
         localStorage.removeItem('user_id');
         localStorage.removeItem('user_email');
         localStorage.removeItem('user_role');
+        localStorage.removeItem('user_name');
     },
 
     getToken() {
@@ -28,6 +30,10 @@ export const AuthService = {
 
     getRole() {
         return localStorage.getItem('user_role');
+    },
+
+    getName() {
+        return localStorage.getItem('user_name') || (this.getEmail() ? this.getEmail().split('@')[0] : '');
     },
 
     isAuthenticated() {

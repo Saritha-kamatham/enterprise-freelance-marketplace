@@ -10,7 +10,7 @@ export const DashboardView = {
             <div class="container">
                 <div style="margin-bottom: 2rem;">
                     <h1 style="font-size: 2rem; font-weight: 700; color: var(--color-text-primary);">Dashboard Console</h1>
-                    <p style="color: var(--color-text-secondary);">Welcome back, <strong>${AuthService.getEmail()}</strong> (${AuthService.getRole()})</p>
+                    <p style="color: var(--color-text-secondary);">Welcome back, <strong id="dash-welcome-name">${AuthService.getName()}</strong> (${AuthService.getRole()})</p>
                 </div>
 
                 <!-- Aggregated Stats Row -->
@@ -42,6 +42,15 @@ export const DashboardView = {
 
                     <!-- Right: Quick Links / User Profile aggregates -->
                     <div class="span-4">
+                        <!-- Profile Details Card -->
+                        <div class="card" style="margin-bottom: 1.5rem;">
+                            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">My Profile</h3>
+                            <div id="profile-card-details">
+                                <div class="skeleton" style="height: 100px;"></div>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" id="btn-edit-profile" style="width: 100%; margin-top: 1rem;">Edit Profile Info</button>
+                        </div>
+
                         <div class="card">
                             <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">Workplace Options</h3>
                             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
@@ -50,6 +59,22 @@ export const DashboardView = {
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Edit Profile Modal -->
+            <div id="profile-modal" class="modal" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000;">
+                <div class="modal-content" style="max-width: 500px; background: var(--color-bg-secondary); padding: 2rem; border-radius: 12px; width: 90%;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center; color: var(--color-text-primary);">Update Profile</h3>
+                    
+                    <form id="edit-profile-form">
+                        <div id="profile-fields-container"></div>
+                        
+                        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                            <button type="button" id="cancel-profile-btn" class="btn btn-secondary" style="flex: 1;">Cancel</button>
+                            <button type="submit" class="btn btn-primary" style="flex: 1;">Save Changes</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         `;
@@ -115,7 +140,120 @@ export const DashboardView = {
                 this.renderFreelancerChart(analytics.monthly_income);
             }
 
-            // 2. Fetch Active/Past Contracts
+            // 2. Fetch Profile Info & Render Card
+            const profileData = await HttpClient.get('/profiles/me');
+            const profileCard = document.getElementById('profile-card-details');
+
+            this.renderProfileDetails(profileData, isClient);
+
+            // 3. Edit Profile Interactions
+            const editProfileBtn = document.getElementById('btn-edit-profile');
+            const profileModal = document.getElementById('profile-modal');
+            const profileForm = document.getElementById('edit-profile-form');
+            const fieldsContainer = document.getElementById('profile-fields-container');
+            const cancelProfileBtn = document.getElementById('cancel-profile-btn');
+
+            editProfileBtn.onclick = () => {
+                profileModal.style.display = 'flex';
+                
+                if (isClient) {
+                    fieldsContainer.innerHTML = `
+                        <div class="form-group">
+                            <label class="form-label">Contact Person Name</label>
+                            <input type="text" id="edit-contact-person" class="form-control" value="${profileData.contact_person || ''}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Company Name</label>
+                            <input type="text" id="edit-company-name" class="form-control" value="${profileData.company_name || ''}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Location</label>
+                            <input type="text" id="edit-location" class="form-control" value="${profileData.location || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Website URL</label>
+                            <input type="url" id="edit-website" class="form-control" value="${profileData.website || ''}">
+                        </div>
+                    `;
+                } else {
+                    fieldsContainer.innerHTML = `
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="edit-full-name" class="form-control" value="${profileData.full_name || ''}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Headline / Title</label>
+                            <input type="text" id="edit-headline" class="form-control" value="${profileData.headline || ''}" placeholder="e.g. Senior Backend Engineer">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Skills (comma separated)</label>
+                            <input type="text" id="edit-skills" class="form-control" value="${profileData.skills || ''}" placeholder="e.g. Java, Docker, React">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Years of Experience</label>
+                            <input type="number" id="edit-experience" class="form-control" value="${profileData.experience_years || 0}" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Hourly Rate (₹)</label>
+                            <input type="number" id="edit-hourly-rate" class="form-control" value="${profileData.hourly_rate || 0}" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Professional Summary / Bio</label>
+                            <textarea id="edit-bio" class="form-control" rows="3">${profileData.bio || ''}</textarea>
+                        </div>
+                    `;
+                }
+            };
+
+            cancelProfileBtn.onclick = () => {
+                profileModal.style.display = 'none';
+            };
+
+            profileForm.onsubmit = async (e) => {
+                e.preventDefault();
+                
+                try {
+                    let updatedProfile;
+                    if (isClient) {
+                        updatedProfile = {
+                            id: profileData.id,
+                            contact_person: document.getElementById('edit-contact-person').value,
+                            company_name: document.getElementById('edit-company-name').value,
+                            location: document.getElementById('edit-location').value,
+                            website: document.getElementById('edit-website').value
+                        };
+                        await HttpClient.put(`/profiles/client/${profileData.id}`, updatedProfile);
+                    } else {
+                        updatedProfile = {
+                            id: profileData.id,
+                            full_name: document.getElementById('edit-full-name').value,
+                            headline: document.getElementById('edit-headline').value,
+                            skills: document.getElementById('edit-skills').value,
+                            experience_years: Number(document.getElementById('edit-experience').value),
+                            hourly_rate: Number(document.getElementById('edit-hourly-rate').value),
+                            bio: document.getElementById('edit-bio').value
+                        };
+                        await HttpClient.put(`/profiles/freelancer/${profileData.id}`, updatedProfile);
+                    }
+                    
+                    Toast.show('Profile updated successfully!', 'success');
+                    profileModal.style.display = 'none';
+                    
+                    // Update local name in session if modified
+                    const newName = isClient ? updatedProfile.company_name : updatedProfile.full_name;
+                    localStorage.setItem('user_name', newName);
+                    window.dispatchEvent(new CustomEvent('auth-changed'));
+                    
+                    // Rerender details directly without page refresh
+                    const newProfileData = await HttpClient.get('/profiles/me');
+                    this.renderProfileDetails(newProfileData, isClient);
+                    document.getElementById('dash-welcome-name').innerText = AuthService.getName();
+                } catch (err) {
+                    Toast.show(err.message, 'error');
+                }
+            };
+
+            // 4. Fetch Active/Past Contracts
             const contracts = await HttpClient.get('/contracts/my-contracts');
             contractsList.innerHTML = '';
 
@@ -160,20 +298,57 @@ export const DashboardView = {
         }
     },
 
+    renderProfileDetails(profileData, isClient) {
+        const profileCard = document.getElementById('profile-card-details');
+        if (isClient) {
+            profileCard.innerHTML = `
+                <div style="font-weight: 700; font-size: 1.1rem; color: var(--color-text-primary); margin-bottom: 0.25rem;">
+                    👤 ${profileData.contact_person || 'Client Partner'}
+                </div>
+                <div style="font-size: 0.9rem; color: var(--color-primary); font-weight: 600; margin-bottom: 0.75rem;">
+                    🏢 ${profileData.company_name || 'Client Company'}
+                </div>
+                <div style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">
+                    📍 <strong>Location:</strong> ${profileData.location || 'Not specified'}
+                </div>
+                <div style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">
+                    🌐 <strong>Website:</strong> ${profileData.website ? `<a href="${profileData.website}" target="_blank" style="color: inherit; text-decoration: underline;">Visit Website</a>` : 'Not specified'}
+                </div>
+            `;
+        } else {
+            profileCard.innerHTML = `
+                <div style="font-weight: 700; font-size: 1.1rem; color: var(--color-text-primary); margin-bottom: 0.25rem;">
+                    👤 ${profileData.full_name || 'Service Provider'}
+                </div>
+                <div style="font-size: 0.9rem; color: var(--color-primary); font-weight: 600; margin-bottom: 0.75rem;">
+                    💼 ${profileData.headline || 'Professional Freelancer'}
+                </div>
+                <div style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">
+                    🎓 <strong>Experience:</strong> ${profileData.experience_years} years
+                </div>
+                <div style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">
+                    🏷️ <strong>Skills:</strong> ${profileData.skills || 'Not specified'}
+                </div>
+                <div style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">
+                    💰 <strong>Hourly Rate:</strong> ₹${profileData.hourly_rate || '0'}/hr
+                </div>
+            `;
+        }
+    },
+
     renderClientChart(analytics) {
         const ctx = document.getElementById('analytics-canvas').getContext('2d');
-        // Render a doughnut/pie chart for spent vs active allocations
         new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['Released Payments (₹)', 'Active Agreements (#)', 'Completed Cycles (#)'],
                 datasets: [{
                     label: 'Client Portfolio Allocations',
-                    data: [analytics.total_spent || 1, analytics.active_projects || 0, 5], // mock standard ratio fallback
+                    data: [analytics.total_spent || 1, analytics.active_projects || 0, 5],
                     backgroundColor: [
-                        '#10b981', // emerald
-                        '#6366f1', // indigo
-                        '#f59e0b'  // amber
+                        '#10b981',
+                        '#6366f1',
+                        '#f59e0b'
                     ],
                     borderColor: '#1e293b',
                     borderWidth: 2

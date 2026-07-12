@@ -61,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
         user.setRole(request.role());
         user = userRepository.save(user);
 
+        String name = "";
         if (request.role() == Role.FREELANCER) {
             FreelancerProfile profile = new FreelancerProfile();
             profile.setUser(user);
@@ -68,16 +69,18 @@ public class AuthServiceImpl implements AuthService {
             profile.setHourlyRate(BigDecimal.ZERO);
             profile.setRatingAvg(BigDecimal.ZERO);
             freelancerProfileRepository.save(profile);
+            name = profile.getFullName();
         } else if (request.role() == Role.CLIENT) {
             ClientProfile profile = new ClientProfile();
             profile.setUser(user);
             profile.setCompanyName(request.companyName() != null ? request.companyName() : "Client Company");
             profile.setVerifiedStatus(false);
             clientProfileRepository.save(profile);
+            name = profile.getCompanyName();
         }
 
         String token = tokenProvider.generateToken(user.getEmail(), user.getRole().name());
-        return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole().name());
+        return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole().name(), name);
     }
 
     @Override
@@ -89,8 +92,19 @@ public class AuthServiceImpl implements AuthService {
             throw new BadCredentialsException("Invalid email or password");
         }
 
+        String name = "";
+        if (user.getRole() == Role.FREELANCER) {
+            name = freelancerProfileRepository.findByUserId(user.getId())
+                    .map(FreelancerProfile::getFullName)
+                    .orElse("Freelancer");
+        } else if (user.getRole() == Role.CLIENT) {
+            name = clientProfileRepository.findByUserId(user.getId())
+                    .map(ClientProfile::getCompanyName)
+                    .orElse("Client Company");
+        }
+
         String token = tokenProvider.generateToken(user.getEmail(), user.getRole().name());
-        return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole().name());
+        return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole().name(), name);
     }
 
     @Override
@@ -186,7 +200,17 @@ public class AuthServiceImpl implements AuthService {
             if (userOpt.isPresent()) {
                 User user = userOpt.get();
                 String token = tokenProvider.generateToken(user.getEmail(), user.getRole().name());
-                AuthResponse authResponse = new AuthResponse(token, user.getId(), user.getEmail(), user.getRole().name());
+                String userName = "";
+                if (user.getRole() == Role.FREELANCER) {
+                    userName = freelancerProfileRepository.findByUserId(user.getId())
+                            .map(FreelancerProfile::getFullName)
+                            .orElse(name != null ? name : "Freelancer");
+                } else if (user.getRole() == Role.CLIENT) {
+                    userName = clientProfileRepository.findByUserId(user.getId())
+                            .map(ClientProfile::getCompanyName)
+                            .orElse(name != null ? name : "Client Company");
+                }
+                AuthResponse authResponse = new AuthResponse(token, user.getId(), user.getEmail(), user.getRole().name(), userName);
                 return new GoogleAuthResponse(false, null, email, name, authResponse);
             } else {
                 String regToken = tokenProvider.generateToken(email, "ROLE_PENDING");
@@ -221,6 +245,7 @@ public class AuthServiceImpl implements AuthService {
         user.setRole(role);
         user = userRepository.save(user);
 
+        String name = "";
         if (role == Role.FREELANCER) {
             FreelancerProfile profile = new FreelancerProfile();
             profile.setUser(user);
@@ -228,15 +253,17 @@ public class AuthServiceImpl implements AuthService {
             profile.setHourlyRate(BigDecimal.ZERO);
             profile.setRatingAvg(BigDecimal.ZERO);
             freelancerProfileRepository.save(profile);
+            name = profile.getFullName();
         } else if (role == Role.CLIENT) {
             ClientProfile profile = new ClientProfile();
             profile.setUser(user);
             profile.setCompanyName(request.companyName() != null && !request.companyName().isBlank() ? request.companyName() : "Client Company");
             profile.setVerifiedStatus(false);
             clientProfileRepository.save(profile);
+            name = profile.getCompanyName();
         }
 
         String token = tokenProvider.generateToken(user.getEmail(), user.getRole().name());
-        return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole().name());
+        return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole().name(), name);
     }
 }
