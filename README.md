@@ -1,256 +1,189 @@
-# 🚀 EliteMarket: Real-Time Freelance Marketplace Platform
+# 🚀 EliteMarket – Enterprise Freelance Marketplace Platform
 
-An enterprise-grade, real-time freelance marketplace platform localized for the Indian market, inspired by **Upwork, Fiverr, Freelancer, and Toptal**. This application enables clients to post work requirements (briefs), freelancers to submit quotes, clients to hire professionals, and both parties to manage active agreements through a responsive, real-time interface.
+EliteMarket is a modern **Java Full Stack Freelance Marketplace** inspired by platforms like **Upwork, Fiverr, Freelancer, and Toptal**. It enables **Clients** to post projects, hire freelancers, manage contracts, and track project progress, while **Freelancers** can showcase their skills, submit bids, collaborate in real time, and complete projects through a secure workflow.
 
-The project is built using **Spring Boot 3**, **Spring Security 6**, **Spring Data JPA**, **MySQL / H2**, **HTML5**, **CSS3 Custom variables (Glassmorphism design system)**, **STOMP WebSockets**, and **REST APIs**, following enterprise-level architecture and best coding practices.
+The application is built using **Spring Boot 3**, **Spring Security**, **Spring Data JPA**, **MySQL**, **HTML5**, **CSS3**, **JavaScript**, **REST APIs**, **JWT Authentication**, **Google OAuth2**, and **STOMP WebSockets**, following enterprise-level architecture and best development practices.
 
-**Live Deployment URL:** [https://enterprise-freelance-marketplace.onrender.com](https://enterprise-freelance-marketplace.onrender.com)
+## 🌐 Live Demo
 
----
-
-# 📌 Features
-
-## 🔐 Authentication & Security
-
-- **Google Sign-In (OAuth2):** Securely sign in or sign up using your verified Google Account (`google-api-client`).
-- **Dynamic Profile Completion:** New Google users are automatically prompted with a role-selection card to choose between Client and Freelancer.
-- **Traditional Auth:** Traditional login/register with BCrypt password encryption.
-- **Role-based Authorization:** Custom stateless JWT authentication validating permissions for `ROLE_CLIENT`, `ROLE_FREELANCER`, and `ROLE_ADMIN`.
+**Application:** https://enterprise-freelance-marketplace.onrender.com
 
 ---
 
-## 👤 Profile & Portfolio Management
+# ✨ Features
 
-- **User Profile Console:** View user details directly from the dashboard sidebar (Name, Title, Skills, Experience, Location, Website, Rates).
-- **Interactive Edit Modal:** Modify profile details dynamically in real-time. Updates immediately reflect in the top navbar and dashboard.
-- **Header Personalization:** Navbar adaptively greets the user by their actual **Display Name** instead of email address.
+### 🔐 Authentication & Security
+- Traditional Login & Registration
+- Google OAuth2 Sign-In
+- JWT Authentication
+- BCrypt Password Encryption
+- Role-Based Authorization (Admin, Client, Freelancer)
 
----
+### 👨‍💻 Freelancer Module
+- Professional Profile Management
+- Browse & Search Projects
+- Submit Bids
+- Track Active Contracts
+- Live Chat with Clients
+- Dashboard with Earnings Analytics
 
-## 💻 Service Provider (Freelancer) Module
+### 🏢 Client Module
+- Company Profile Management
+- Post & Manage Projects
+- Accept or Reject Bids
+- Automatic Contract Creation
+- Escrow Payment Simulation
+- Dashboard Analytics
 
-- Register and Login (Traditional & Google Auth)
-- Create and Update Professional Profile (Skills, bio, hourly rate, headline, and experience)
-- Browse Available Work Requirements / Briefs
-- Search and Filter Briefs by Categories (including AI & Data Science)
-- Submit Quotes (Rate, duration, and proposal text)
-- Track Quote Status
-- View Active Agreements
-- Live Chat Workroom & File Attachments (supporting in-browser PDF previews)
-- Dashboard with Earnings Statistics & Analytics charts
+### 💬 Real-Time Collaboration
+- STOMP WebSocket Chat
+- Instant Messaging
+- File Sharing
+- PDF & Image Preview
 
----
-
-## 🏢 Client (Employer) Module
-
-- Register and Login (Traditional & Google Auth)
-- Manage Company Profile (Company name, contact name, location, website)
-- Post New Work Requirements / Briefs (with ₹ budgets)
-- Edit and Delete Briefs
-- View Submitted Quotes
-- Accept or Reject Quotes
-- Automatic Agreement & Payment Phase Creation on Quote Acceptance
-- Track Active Projects and Release Escrow Payments
-- Dashboard Analytics showing Released Payments & Completed Cycles
-
----
-
-## 📦 Bid & Contract Management
-
-- **Escrow Simulation:** automated milestone-based payment processing. Funds are held as "Funded" and released to the freelancer in real-time.
-- **Agreement Flow:** Quote Acceptance instantly activates contracts, starts payment phases, and sets up a live chat workroom.
-- **Completion & Feedback:** Clients can mark contracts as completed and submit a 1 to 5-star review with comments.
+### 📊 Dashboard
+- Interactive Charts using Chart.js
+- Earnings & Spending Statistics
+- Active Projects
+- Contract Tracking
+- Review & Rating System
 
 ---
 
-## 💬 Real-Time Collaboration & Messaging
+# 🏗️ System Architecture
 
-- **STOMP WebSocket Chat:** Real-time, peer-to-peer workspace chat.
-- **In-Browser File Previews:** Secure work attachments can be previewed/viewed directly in-browser tabs (inline Content-Disposition) instead of forcing immediate downloads.
-- **Resilient Connection:** WebSockets with exponential backoff reconnect capabilities.
+```
+Frontend (HTML, CSS, JavaScript)
+            │
+   REST APIs & WebSockets
+            │
+ Spring Boot Application
+            │
+Spring Security + JWT
+            │
+ Spring Data JPA (Hibernate)
+            │
+      MySQL Database
+```
 
 ---
 
-# 🚀 Performance Enhancements
+# 🔄 Application Workflow
 
-- **N+1 Query Reduction:** Optimized database mappings by separating listing endpoints from stats aggregation. Browsing requirements is now **4x faster** with a **75% reduction** in database roundtrips.
+1. Users register or log in using traditional authentication or Google OAuth2.
+2. After successful login, a JWT token is generated for secure access.
+3. Clients post work requirements with budget and deadline.
+4. Freelancers browse projects and submit proposals.
+5. Clients review and accept or reject bids.
+6. Accepted bids automatically create contracts and milestones.
+7. Clients and freelancers collaborate through real-time chat.
+8. Escrow payments are released after milestone completion.
+9. Clients provide ratings and reviews once the project is completed.
 
 ---
 
-# 🛠 Technology Stack
+# 🛠️ Technology Stack
 
 ## Backend
-
 - Java 17+
 - Spring Boot 3.x
 - Spring MVC
 - Spring Security 6
-- Google API Client (OAuth2 verification)
 - Spring Data JPA (Hibernate)
-- Flyway Migrations
+- JWT Authentication
+- Google OAuth2
 - STOMP WebSockets
 - REST APIs
 
----
-
 ## Frontend
-
 - HTML5
-- CSS3 (Vanilla Custom Properties - Premium Glassmorphism)
-- JavaScript (ES6 Modules)
-- SockJS & StompJS
-- Chart.js (Dashboard Performance Analytics)
-
----
+- CSS3
+- JavaScript (ES6)
+- Bootstrap 5
+- Fetch API
+- Chart.js
 
 ## Database
-
-- H2 Database (Local development in-memory, auto-seeded)
-- MySQL 8.0 / Aiven Cloud MySQL (Production database persistence)
+- MySQL 8 (Production)
+- H2 Database (Development)
 
 ---
 
 # 📂 Project Structure
 
 ```
-enterprise-freelance-marketplace
-
-├── backend
-│   ├── src/main/java/com/enterprise/marketplace
-│   │   ├── config
-│   │   ├── domain (entities, enums)
-│   │   ├── dto (requests, responses)
-│   │   ├── repository
-│   │   ├── security
-│   │   ├── service
-│   │   ├── web (controllers, exceptions)
-│   │   └── MarketplaceApplication.java
-│   ├── src/main/resources
-│   │   ├── db/migration (Flyway SQL migrations)
-│   │   └── application.yml
-│   └── pom.xml
+EliteMarket
 │
-└── frontend
-    ├── index.html
-    ├── src/
-    │   ├── components (navbar, toast)
-    │   ├── services (auth, websocket)
-    │   ├── views (home, projects, project-detail, contract, dashboard)
-    │   ├── app.js
-    │   ├── config.js
-    │   └── router.js
-    └── assets/
-        └── css/ (design system, layouts)
+├── backend
+│   ├── config
+│   ├── controller
+│   ├── dto
+│   ├── entity
+│   ├── repository
+│   ├── security
+│   ├── service
+│   ├── exception
+│   └── resources
+│
+├── frontend
+│   ├── assets
+│   ├── css
+│   ├── js
+│   └── index.html
+│
+├── Dockerfile
+├── docker-compose.yml
+├── pom.xml
+└── README.md
 ```
 
 ---
 
-# 🗄 Database Configuration
+# 🚀 Deployment
 
-Database Name
+The application is deployed on **Render** with a production **MySQL (Aiven Cloud)** database.
 
-```
-freelance_db
-```
-
-Main Tables
-
-- users
-- freelancer_profiles
-- client_profiles
-- projects
-- bids
-- contracts
-- milestones
-- reviews
-- messages
-- attachments
+### Deployment Features
+- Production Deployment on Render
+- Cloud MySQL Database
+- Secure JWT Authentication
+- Google OAuth2 Login
+- REST API Integration
+- WebSocket-Based Real-Time Messaging
 
 ---
 
-# 🛠 Google Sign-In Setup
+# ⭐ Project Highlights
 
-The application uses Google Identity Services. The Client ID is configured in the frontend configuration module:
-
-*   **OAuth Client ID:** `913704962776-3gglv30lqgfvijhu8mobocrikue0bsdf.apps.googleusercontent.com`
-*   **Authorized JavaScript Origins:**
-    *   `http://localhost:8080` (Local Development)
-    *   `https://enterprise-freelance-marketplace.onrender.com` (Production Deployment)
-
----
-
-# 🚀 Running the Application
-
-## Running with Docker Compose
-You can boot the database, backend services, and frontend proxy with:
-```bash
-docker-compose up --build
-```
-
+- Enterprise-Level Java Full Stack Architecture
+- Secure JWT & Google OAuth2 Authentication
+- Real-Time Chat using STOMP WebSockets
+- Escrow-Based Contract & Milestone Workflow
+- Responsive Glassmorphism UI
+- Interactive Dashboard Analytics
+- Optimized Database Performance
+- Clean Layered Spring Boot Architecture
 
 ---
 
-## Running Locally for Development
+# 🔮 Future Enhancements
 
-### 1. Backend
-
-Navigate to backend directory:
-
-```bash
-cd backend
-```
-
-Run the application (loads in-memory H2 database auto-seeded with 20 realistic Indian projects):
-
-```cmd
-mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=local
-```
-
-Backend URL: `http://localhost:8080`
+- AI-Based Project Recommendations
+- Video Meetings
+- Email Notifications
+- Payment Gateway Integration
+- Mobile Application
+- Advanced Admin Analytics
+- Multi-Language Support
 
 ---
 
-### 2. Frontend
+# 👩‍💻 Developer
 
-Navigate to frontend directory:
+**Saritha Kamatham**
 
-```bash
-cd frontend
-```
-
-Serve using static server:
-
-```bash
-npx http-server -p 5000
-```
-
-Frontend URL: `http://localhost:5000` *(Ensure to open in **Incognito Mode** to bypass aggressively cached ES6 modules!)*
-
----
-
-# 🛠 Database Configuration (Production / Aiven Cloud MySQL)
-
-The production server connects to Aiven Cloud MySQL. The `application-prod.yml` datasource configuration is set as follows:
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://mysql-8bca501-sarithakamatham2006-1c8b.g.aivencloud.com:26655/freelance_db?useSSL=true&requireSSL=true&verifyServerCertificate=false&allowPublicKeyRetrieval=true
-    username: avnadmin
-    password: <AIVEN_DB_PASSWORD>
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
-    hibernate:
-      ddl-auto: update
-```
-
----
-
-# 👨💻 Developed By
+**B.Tech – Computer Science & Engineering (Artificial Intelligence)**
 
 **Java Full Stack Major Project**
 
-Enterprise Freelance Marketplace Platform
-
-Developed using Spring Boot, MySQL, HTML, CSS, JavaScript, WebSockets, and REST APIs.
+Built using **Spring Boot, Spring Security, MySQL, HTML5, CSS3, JavaScript, REST APIs, JWT Authentication, Google OAuth2, and WebSockets.**
