@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteMarket - Service Provider Marketplace</title>
+    
+    <!-- Meta tags for SEO compliance -->
+    <meta name="description" content="Secure, real-time marketplace for service orders, project requirements, phase payments, and live chat.">
+    
+    <!-- Google Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Design Stylesheets -->
+    <link rel="stylesheet" href="./assets/css/tokens.css">
+    <link rel="stylesheet" href="./assets/css/components.css">
+    <link rel="stylesheet" href="./assets/css/layout.css">
+
+    <!-- External CDNs for UI graphs & WS connections -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+
+    <!-- Sticky Navigation Header -->
+    <nav class="navbar" id="main-nav">
+        <!-- Rendered adaptively by navbar component -->
+    </nav>
+
+    <!-- Main Dynamic SPA View Container -->
+    <main class="main-content" id="app">
+        <!-- Rendered dynamically by views -->
+    </main>
+
+    <!-- SPA Application bootstrap -->
+    <script type="module" src="./src/app.js"></script>
+</body>
+</html>
