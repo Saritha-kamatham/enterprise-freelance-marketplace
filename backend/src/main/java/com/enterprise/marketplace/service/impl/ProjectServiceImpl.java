@@ -61,7 +61,7 @@ public class ProjectServiceImpl implements ProjectService {
         
         project = projectRepository.save(project);
 
-        ProjectResponse response = mapToResponse(project);
+        ProjectResponse response = mapToResponse(project, true);
         
         // Broadcast new project to all freelancers
         messagingTemplate.convertAndSend("/topic/projects", response);
@@ -88,7 +88,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
         spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), ProjectStatus.OPEN));
 
-        return projectRepository.findAll(spec, pageable).map(this::mapToResponse);
+        return projectRepository.findAll(spec, pageable).map(p -> mapToResponse(p, false));
     }
 
     @Override
@@ -96,7 +96,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectResponse getProject(Long id) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Project not found with ID: " + id));
-        return mapToResponse(project);
+        return mapToResponse(project, true);
     }
 
     @Override
@@ -108,15 +108,27 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(() -> new IllegalArgumentException("Client profile not found"));
 
         return projectRepository.findByClientIdOrderByCreatedAtDesc(client.getId()).stream()
-                .map(this::mapToResponse)
+                .map(p -> mapToResponse(p, false))
                 .collect(Collectors.toList());
     }
 
-    private ProjectResponse mapToResponse(Project project) {
-        long bidCount = bidRepository.countByProjectId(project.getId());
-        BigDecimal minBid = bidRepository.findMinBidAmountByProjectId(project.getId());
-        BigDecimal maxBid = bidRepository.findMaxBidAmountByProjectId(project.getId());
-        Double avgBid = bidRepository.findAvgBidAmountByProjectId(project.getId());
+    private ProjectResponse mapToResponse(Project project, boolean includeStats) {
+        long bidCount = 0;
+        BigDecimal minBid = BigDecimal.ZERO;
+        BigDecimal maxBid = BigDecimal.ZERO;
+        Double avgBid = 0.0;
+
+        if (includeStats) {
+            bidCount = bidRepository.countByProjectId(project.getId());
+            minBid = bidRepository.findMinBidAmountByProjectId(project.getId());
+            if (minBid == null) minBid = BigDecimal.ZERO;
+            maxBid = bidRepository.findMaxBidAmountByProjectId(project.getId());
+            if (maxBid == null) maxBid = BigDecimal.ZERO;
+            avgBid = bidRepository.findAvgBidAmountByProjectId(project.getId());
+            if (avgBid == null) avgBid = 0.0;
+        } else {
+            bidCount = bidRepository.countByProjectId(project.getId());
+        }
 
         return new ProjectResponse(
                 project.getId(),
@@ -133,9 +145,9 @@ public class ProjectServiceImpl implements ProjectService {
                 project.getVersion(),
                 project.getCreatedAt(),
                 bidCount,
-                minBid != null ? minBid : BigDecimal.ZERO,
-                maxBid != null ? maxBid : BigDecimal.ZERO,
-                avgBid != null ? avgBid : 0.0
+                minBid,
+                maxBid,
+                avgBid
         );
     }
 }
