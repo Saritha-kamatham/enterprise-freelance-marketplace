@@ -2,6 +2,9 @@ package com.enterprise.marketplace.config;
 
 import com.enterprise.marketplace.security.JwtTokenProvider;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -14,11 +17,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.StringUtils;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -43,6 +49,20 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*")
+                .addInterceptors(new HttpSessionHandshakeInterceptor() {
+                    @Override
+                    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
+                                                   WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+                        if (request instanceof ServletServerHttpRequest) {
+                            ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
+                            String token = servletRequest.getServletRequest().getParameter("token");
+                            if (token != null) {
+                                attributes.put("token", token);
+                            }
+                        }
+                        return true;
+                    }
+                })
                 .withSockJS();
     }
 
@@ -59,10 +79,18 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
                         jwt = authHeader.substring(7);
                     } else {
-                        // Fallback: Check query parameters (some STOMP clients cannot send headers during SockJS fallback handshakes)
-                        List<String> tokenParams = accessor.getNativeHeader("token");
-                        if (tokenParams != null && !tokenParams.isEmpty()) {
-                            jwt = tokenParams.get(0);
+                        // Fallback 1: Check session attributes copied from HTTP query parameter during handshake
+                        Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+                        if (sessionAttributes != null) {
+                            jwt = (String) sessionAttributes.get("token");
+                        }
+                        
+                        // Fallback 2: Check STOMP native header
+                        if (jwt == null) {
+                            List<String> tokenParams = accessor.getNativeHeader("token");
+                            if (tokenParams != null && !tokenParams.isEmpty()) {
+                                jwt = tokenParams.get(0);
+                            }
                         }
                     }
 
