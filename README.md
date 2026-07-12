@@ -4,6 +4,8 @@ An enterprise-grade, real-time freelance marketplace platform localized for the 
 
 The project is built using **Spring Boot 3**, **Spring Security 6**, **Spring Data JPA**, **MySQL / H2**, **HTML5**, **CSS3 Custom variables (Glassmorphism design system)**, **STOMP WebSockets**, and **REST APIs**, following enterprise-level architecture and best coding practices.
 
+**Live Deployment URL:** [https://enterprise-freelance-marketplace.onrender.com](https://enterprise-freelance-marketplace.onrender.com)
+
 ---
 
 # 📌 Features
@@ -143,7 +145,7 @@ enterprise-freelance-marketplace
 
 ---
 
-# 🗄 Database
+# 🗄 Database Configuration
 
 Database Name
 
@@ -163,6 +165,17 @@ Main Tables
 - reviews
 - messages
 - attachments
+
+---
+
+# 🛠 Google Sign-In Setup
+
+The application uses Google Identity Services. The Client ID is configured in the frontend configuration module:
+
+*   **OAuth Client ID:** `913704962776-3gglv30lqgfvijhu8mobocrikue0bsdf.apps.googleusercontent.com`
+*   **Authorized JavaScript Origins:**
+    *   `http://localhost:8080` (Local Development)
+    *   `https://enterprise-freelance-marketplace.onrender.com` (Production Deployment)
 
 ---
 
@@ -215,22 +228,21 @@ Frontend URL: `http://localhost:5000` *(Ensure to open in **Incognito Mode** to 
 
 ---
 
-# 🛠 MySQL Configuration (Production / Aiven Cloud)
+# 🛠 Database Configuration (Production / Aiven Cloud MySQL)
 
-Create Database:
-
-```sql
-CREATE DATABASE freelance_db;
-```
-
-Update your `application.yml` or environment variables:
+The production server connects to Aiven Cloud MySQL. The `application-prod.yml` datasource configuration is set as follows:
 
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://<your-mysql-host>:<port>/freelance_db?useSSL=true&requireSSL=true&verifyServerCertificate=false
+    url: jdbc:mysql://mysql-8bca501-sarithakamatham2006-1c8b.g.aivencloud.com:26655/freelance_db?useSSL=true&requireSSL=true&verifyServerCertificate=false&allowPublicKeyRetrieval=true
     username: avnadmin
-    password: your_password
+    password: <AIVEN_DB_PASSWORD>
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
 ```
 
 ---
