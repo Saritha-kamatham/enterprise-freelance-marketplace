@@ -179,7 +179,7 @@ export const HomeView = {
         async function handleGoogleLogin(credential) {
             try {
                 const response = await HttpClient.post('/auth/google', { credential });
-                if (response.rolePending) {
+                if (response.role_pending) {
                     // Show role selection modal
                     const roleModal = document.getElementById('role-modal');
                     roleModal.style.display = 'flex';
@@ -211,10 +211,10 @@ export const HomeView = {
                         
                         try {
                             const regResponse = await HttpClient.post('/auth/google/register', {
-                                regToken: response.regToken,
+                                reg_token: response.reg_token,
                                 role: selectedRole,
-                                fullName: selectedRole === 'FREELANCER' ? fullName : null,
-                                companyName: selectedRole === 'CLIENT' ? companyName : null
+                                full_name: selectedRole === 'FREELANCER' ? fullName : null,
+                                company_name: selectedRole === 'CLIENT' ? companyName : null
                             });
                             
                             roleModal.style.display = 'none';
@@ -229,7 +229,7 @@ export const HomeView = {
                     };
                 } else {
                     // Direct login success
-                    AuthService.saveSession(response.authResponse);
+                    AuthService.saveSession(response.auth_response);
                     Toast.show('Google Login successful!', 'success');
                     WebSocketService.connect();
                     Router.navigate('/dashboard');
