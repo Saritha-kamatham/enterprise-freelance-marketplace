@@ -5,15 +5,15 @@
 
 -- Insert Users (3 Clients, 5 Freelancers, 1 Admin)
 INSERT INTO users (id, email, password_hash, role, is_active, created_at, updated_at) VALUES
-(1, 'client1@marketplace.com', '$2a$10$8.UnVuG9HHgffUDAlk8q2Ou5JLs814nYguzRTR5M5nQE4G1R1Sgb6', 'CLIENT', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(2, 'client2@marketplace.com', '$2a$10$8.UnVuG9HHgffUDAlk8q2Ou5JLs814nYguzRTR5M5nQE4G1R1Sgb6', 'CLIENT', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(3, 'client3@marketplace.com', '$2a$10$8.UnVuG9HHgffUDAlk8q2Ou5JLs814nYguzRTR5M5nQE4G1R1Sgb6', 'CLIENT', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(4, 'free1@marketplace.com', '$2a$10$8.UnVuG9HHgffUDAlk8q2Ou5JLs814nYguzRTR5M5nQE4G1R1Sgb6', 'FREELANCER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(5, 'free2@marketplace.com', '$2a$10$8.UnVuG9HHgffUDAlk8q2Ou5JLs814nYguzRTR5M5nQE4G1R1Sgb6', 'FREELANCER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(6, 'free3@marketplace.com', '$2a$10$8.UnVuG9HHgffUDAlk8q2Ou5JLs814nYguzRTR5M5nQE4G1R1Sgb6', 'FREELANCER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(7, 'free4@marketplace.com', '$2a$10$8.UnVuG9HHgffUDAlk8q2Ou5JLs814nYguzRTR5M5nQE4G1R1Sgb6', 'FREELANCER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(8, 'free5@marketplace.com', '$2a$10$8.UnVuG9HHgffUDAlk8q2Ou5JLs814nYguzRTR5M5nQE4G1R1Sgb6', 'FREELANCER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(9, 'admin@marketplace.com', '$2a$10$8.UnVuG9HHgffUDAlk8q2Ou5JLs814nYguzRTR5M5nQE4G1R1Sgb6', 'ADMIN', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(1, 'client1@marketplace.com', '$2a$10$/jnE44rz8Bz5jXqvgFTleuRqnan4AsmXb5I2TzU.t/72/zVFf5ASG', 'CLIENT', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 'client2@marketplace.com', '$2a$10$/jnE44rz8Bz5jXqvgFTleuRqnan4AsmXb5I2TzU.t/72/zVFf5ASG', 'CLIENT', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(3, 'client3@marketplace.com', '$2a$10$/jnE44rz8Bz5jXqvgFTleuRqnan4AsmXb5I2TzU.t/72/zVFf5ASG', 'CLIENT', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(4, 'free1@marketplace.com', '$2a$10$/jnE44rz8Bz5jXqvgFTleuRqnan4AsmXb5I2TzU.t/72/zVFf5ASG', 'FREELANCER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(5, 'free2@marketplace.com', '$2a$10$/jnE44rz8Bz5jXqvgFTleuRqnan4AsmXb5I2TzU.t/72/zVFf5ASG', 'FREELANCER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(6, 'free3@marketplace.com', '$2a$10$/jnE44rz8Bz5jXqvgFTleuRqnan4AsmXb5I2TzU.t/72/zVFf5ASG', 'FREELANCER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(7, 'free4@marketplace.com', '$2a$10$/jnE44rz8Bz5jXqvgFTleuRqnan4AsmXb5I2TzU.t/72/zVFf5ASG', 'FREELANCER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(8, 'free5@marketplace.com', '$2a$10$/jnE44rz8Bz5jXqvgFTleuRqnan4AsmXb5I2TzU.t/72/zVFf5ASG', 'FREELANCER', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(9, 'admin@marketplace.com', '$2a$10$/jnE44rz8Bz5jXqvgFTleuRqnan4AsmXb5I2TzU.t/72/zVFf5ASG', 'ADMIN', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Insert Client Profiles
 INSERT INTO client_profiles (id, user_id, company_name, contact_person, phone, location, website, verified_status) VALUES
