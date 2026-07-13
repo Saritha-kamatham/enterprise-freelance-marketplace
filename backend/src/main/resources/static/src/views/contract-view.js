@@ -390,13 +390,20 @@ export const ContractView = {
         const mdLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
         textContent = textContent.replace(mdLinkRegex, '<a href="$2" target="_blank" style="color: inherit; text-decoration: underline; font-weight: bold;">$1</a>');
 
+        // Parse UTC timestamp and adjust to user's local timezone (e.g. IST)
+        let displayTime = '';
+        if (msg.timestamp) {
+            const timeStr = typeof msg.timestamp === 'string' && !msg.timestamp.endsWith('Z') ? msg.timestamp + 'Z' : msg.timestamp;
+            displayTime = new Date(timeStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
         bubble.innerHTML = `
             <div style="font-size: 0.7rem; opacity: 0.8; margin-bottom: 0.25rem; font-weight: bold;">
                 ${isMe ? 'You' : msg.sender_email.split('@')[0]}
             </div>
             <div style="word-break: break-word; white-space: pre-line;">${textContent}</div>
             <div style="font-size: 0.65rem; text-align: right; opacity: 0.6; margin-top: 0.25rem;">
-                ${new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                ${displayTime}
             </div>
         `;
 
